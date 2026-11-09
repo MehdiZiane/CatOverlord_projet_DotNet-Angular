@@ -110,6 +110,19 @@ Dette technique assumée en tranche 1 : un joueur temporaire sans connexion, à 
 - [ ] ✅ `Program.cs` : `using CatOverlord.Infrastructure.Persistence;` et `using Microsoft.EntityFrameworkCore;`, puis `builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));` avant `AddControllers()`
 - [ ] Nettoyage : supprimer `WeatherForecast.cs` et `Controllers/WeatherForecastController.cs` (modèle par défaut inutile)
 
+### B7. Tranche 1 : état du jeu et clic
+- [x] DTO `RessourceEtatDto` et `GameStateDto` présents dans `CatOverlord.Application/DTOs/GameStateDto.cs` avec les champs attendus.
+- [x] `IGameService` déclare `GetStateAsync()` et `ClickAsync()`, retournant `Task<GameStateDto>`.
+- [x] `GameService : IGameService` injecte `AppDbContext`; le joueur temporaire `joueur-temp` est créé avec le palier 1 et une ligne de ressource `croquettes`.
+- [x] `ClickAsync` ajoute une croquette, incrémente `NombreClics`, fixe `DerniereMiseAJour` avec `DateTime.UtcNow` et appelle `SaveChangesAsync`.
+- [x] `Include` / `ThenInclude` chargent `PalierActuel` et `Ressource` avant la conversion en DTO.
+- [x] `GameController` expose `GET api/game/state` et `POST api/game/click`, retourne `ActionResult<GameStateDto>` et délègue à `IGameService`.
+- [x] `Program.cs` enregistre `IGameService` avec `GameService` via `AddScoped`.
+- [x] Architecture vérifiée : Application référence seulement Domain et ne référence ni EF Core ni Infrastructure; le contrôleur ne retourne que des DTO.
+- [x] Nettoyage vérifié : les deux `Class1.cs` et les fichiers `WeatherForecast.cs` / `WeatherForecastController.cs` sont supprimés.
+- [ ] `dotnet build` standard depuis `backend` : échec temporaire car la DLL Debug est verrouillée par le processus `CatOverlord.Api` (PID 15900). Vérification alternative réussie avec `dotnet build -c Release` (0 erreur; avertissements NU1902/NU1903 connus).
+- [x] Aucun fichier `bin/` ou `obj/` n'apparaît dans `git status`.
+
 ---
 
 ## Base de données

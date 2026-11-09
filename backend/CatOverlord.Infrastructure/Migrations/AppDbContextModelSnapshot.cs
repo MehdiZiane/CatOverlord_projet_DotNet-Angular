@@ -122,6 +122,53 @@ namespace CatOverlord.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Paliers");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Un canapé, un rayon de soleil et des humains très naïfs.",
+                            Nom = "Le salon",
+                            Numero = 1,
+                            SeuilDeblocage = 0.0,
+                            ThemeFront = "theme-salon"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Les chats errants ont compris qu'ils pouvaient travailler pour toi. Contre des croquettes, évidemment.",
+                            Nom = "La rue",
+                            Numero = 2,
+                            SeuilDeblocage = 1000.0,
+                            ThemeFront = "theme-rue"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Le maire est allergique aux chats. Tu t'en occupes personnellement.",
+                            Nom = "La ville",
+                            Numero = 3,
+                            SeuilDeblocage = 100000.0,
+                            ThemeFront = "theme-ville"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Les humains pensent encore diriger. Ils ont tort, mais c'est mignon.",
+                            Nom = "La planète",
+                            Numero = 4,
+                            SeuilDeblocage = 10000000.0,
+                            ThemeFront = "theme-planete"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Prochaine cible : la Lune, qui est clairement une grosse boule de croquettes.",
+                            Nom = "L'espace",
+                            Numero = 5,
+                            SeuilDeblocage = 1000000000.0,
+                            ThemeFront = "theme-espace"
+                        });
                 });
 
             modelBuilder.Entity("CatOverlord.Domain.Entities.Ressource", b =>
@@ -156,6 +203,16 @@ namespace CatOverlord.Infrastructure.Migrations
                     b.HasIndex("PalierDeblocageId");
 
                     b.ToTable("Ressources");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "croquettes",
+                            Icone = "🍖",
+                            Nom = "Croquettes",
+                            PalierDeblocageId = 1
+                        });
                 });
 
             modelBuilder.Entity("CatOverlord.Domain.Entities.Joueur", b =>
