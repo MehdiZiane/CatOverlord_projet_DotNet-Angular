@@ -1,0 +1,33 @@
+.jeu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 3rem;
+  font-family: system-ui, sans-serif;
+}
+
+.compteur {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.ronron {
+  font-size: 6rem;
+  width: 10rem;
+  height: 10rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: #ffe8b3;
+  transition: transform 0.1s;
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.erreur {
+  color: #b00020;
+  text-align: center;
+}

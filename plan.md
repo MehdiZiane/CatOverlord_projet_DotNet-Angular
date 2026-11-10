@@ -10,7 +10,7 @@
 - .NET SDK : **10.0.400**, cible `net10.0` (migré depuis .NET 8)
 - EF Core : **10.0.x** (SqlServer et Design en `10.0.*`, résolu en 10.0.14), outil `dotnet-ef` 10.0.x en outil local
 - Base de données : SQL Server **LocalDB**, instance `MSSQLLocalDB`, base `CatOverlordDb`
-- Front : Angular CLI 22.2.4, Node 26.8.1 (Angular 22 exige Node >= 22.12), non démarré
+- Front : Angular 22.2.5 (CLI 22.2.6), Node 26.13.0 (VM de formation), npm 11.20.0, TypeScript 6.0.3, RxJS 7.8.2, tests unitaires avec Vitest 5.1.0 ; projet créé dans `frontend/`.
 - Outils : VS Code, SSMS 22, Git (dépôt GitHub `MehdiZiane/CatOverlord_projet_DotNet-Angular`)
 - Shell : PowerShell et Git Bash sous Windows
 
@@ -30,7 +30,13 @@ CatOverlord_projet_DotNet-Angular/
       Migrations/
     CatOverlord.Api/               (controllers, Program.cs, appsettings.json)
     CatOverlord.Tests/             (xUnit)
-  frontend/                        (à créer, Angular)
+  frontend/
+    .gitignore
+    package.json
+    proxy.conf.json
+    src/app/core/models/
+    src/app/core/services/
+    src/app/features/game/
 ```
 
 **Graphe de dépendances attendu**
@@ -49,6 +55,7 @@ Domain         -> (rien)
 - Quantités de jeu en `double`.
 - Pas de secret dans le dépôt (la chaîne de connexion LocalDB n'a pas de mot de passe ; la future clé JWT ira dans `dotnet user-secrets`).
 - Le serveur fait foi pour les calculs de jeu.
+- Commandes Angular : utiliser `npx ng ...` ou les scripts `npm start` / `npm run build` ; `ng` n'est pas installé globalement. Si PowerShell bloque npm.ps1, utiliser `npm.cmd` ou Git Bash.
 
 **Plan par tranches verticales**
 1. Chat cliquable : base minimale, `GET state`, `POST click`, projet Angular et page d'accueil
@@ -155,7 +162,18 @@ Dette technique assumée en tranche 1 : un joueur temporaire sans connexion, à 
 
 ## Frontend
 
-- [ ] Non démarré. Projet Angular à créer dans `frontend/` (composants standalone, signals), puis page d'accueil, écran de jeu avec le gros bouton « ronronner », appels à l'API. Détail des tâches à ajouter quand cette étape sera donnée.
+### F1. Tranche 1 : projet Angular et écran de jeu
+- [x] ✅ Projet Angular créé dans `frontend/` (routing, SCSS, sans SSR, sans dépôt Git imbriqué). `frontend/.gitignore` existe ; `node_modules`, `.angular` et `dist` sont ignorés par Git.
+- [x] ✅ `frontend/proxy.conf.json` cible `http://localhost:5030`, correspondant au profil `http` de `backend/CatOverlord.Api/Properties/launchSettings.json`, avec `secure: false`. `frontend/package.json` : script `start` = `ng serve --proxy-config proxy.conf.json`.
+- [x] ✅ `frontend/src/app/core/models/game-state.model.ts` : `RessourceEtat` et `GameState` sont en camelCase et correspondent aux champs/types de `GameStateDto` (nombres, chaînes et tableau).
+- [x] ✅ `frontend/src/app/core/services/game-api.service.ts` : `GameApiService` fourni à root, `HttpClient` via `inject`, signals `state` et `error`, `load()` en GET et `click()` en POST avec URLs relatives. Les abonnements HTTP sont ponctuels et se terminent avec la réponse.
+- [x] ✅ `frontend/src/app/features/game/game.component.ts`, `.html`, `.scss` : composant standalone `GameComponent` (`app-game`), `ngOnInit` charge l'état, `ronronner()` appelle le clic, `computed` sélectionne `croquettes`, template avec `@if`, bouton chat, compteur, ronrons et erreur.
+- [ ] `frontend/src/app/app.config.ts` : `provideHttpClient()` n'est pas ajouté à `providers`. Les routes et le reste du shell sont conformes : redirection vide vers `jeu`, lazy loading, `<router-outlet />` seul et `RouterOutlet` importé dans `app.ts`.
+  - ⚠ écart : `frontend/src/app/app.config.ts`, ligne 4 (import) et ligne 7 (providers) : ajouter `provideHttpClient()` dans le tableau `providers`; sinon `HttpClient` n'est pas fourni à l'exécution.
+- [x] ✅ Aucune URL absolue `http://localhost` dans le code TypeScript. `npm run build` dans `frontend` réussit sans erreur.
+- [ ] Vérification manuelle : API lancée + `npm start`, puis http://localhost:4200 affiche le compteur ; chaque clic ajoute 1 croquette ; la valeur persiste après rechargement.
+  - ⚠ vérification à effectuer manuellement : démarrer l'API et le frontend, puis tester affichage, clic et persistance après rechargement.
+- Dette technique : pas de resynchronisation périodique ni de gestion hors-ligne (tranche 4) ; pas de thème par palier (tranche 5) ; `app.spec.ts` généré à adapter à la phase de tests.
 
 ---
 

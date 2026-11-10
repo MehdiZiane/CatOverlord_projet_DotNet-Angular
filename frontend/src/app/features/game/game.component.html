@@ -1,0 +1,19 @@
+@if (api.error(); as err) {
+  <p class="erreur">{{ err }}</p>
+}
+
+@if (state(); as s) {
+  <main class="jeu">
+    <h1>Cat Overlord</h1>
+    <p class="palier">{{ s.palierNom }}</p>
+
+    @if (croquettes(); as c) {
+      <p class="compteur">{{ c.icone }} {{ c.quantite | number: '1.0-0' }} {{ c.nom }}</p>
+    }
+
+    <button type="button" class="ronron" (click)="ronronner()" aria-label="Ronronner">🐱</button>
+    <p class="clics">{{ s.nombreClics | number }} ronrons</p>
+  </main>
+} @else {
+  <p>Chargement…</p>
+}
